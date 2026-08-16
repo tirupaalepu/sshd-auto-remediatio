@@ -6,7 +6,9 @@
 .terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
+terraform/build/
+*.tfvars
+!*.tfvars.example
 __pycache__/
 *.pyc
 .venv/

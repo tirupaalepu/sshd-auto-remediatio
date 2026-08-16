@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
   }
 }
 
@@ -62,7 +66,7 @@ resource "aws_iam_instance_profile" "ec2_ssm" {
 
 resource "aws_security_group" "target" {
   name        = "${var.project_name}-target"
-  description = "Lab target — prefer SSM; SSH optional"
+  description = "Lab target - prefer SSM; SSH optional"
 
   egress {
     from_port   = 0
