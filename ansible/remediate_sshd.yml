@@ -1,0 +1,30 @@
+---
+# Restart sshd on the target EC2 via AWS Systems Manager (works when SSH is already down).
+- name: Remediate sshd via SSM
+  hosts: localhost
+  gather_facts: false
+  vars:
+    target_instance_id: "{{ target_instance_id | mandatory }}"
+    aws_region: "{{ aws_region | default('us-east-1') }}"
+  tasks:
+    - name: Start sshd and verify active
+      amazon.aws.ssm_command:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ target_instance_id }}"
+        document_name: AWS-RunShellScript
+        parameters:
+          commands:
+            - |
+              set -e
+              if command -v systemctl >/dev/null 2>&1; then
+                systemctl start sshd || systemctl start ssh
+                systemctl is-active sshd || systemctl is-active ssh
+              else
+                service sshd start || service ssh start
+              fi
+      register: ssm_result
+
+    - name: Show SSM output
+      ansible.builtin.debug:
+        var: ssm_result
